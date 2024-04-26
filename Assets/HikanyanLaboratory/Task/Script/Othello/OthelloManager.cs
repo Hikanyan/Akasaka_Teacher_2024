@@ -1,12 +1,16 @@
-﻿using UnityEngine;
+﻿using HikanyanLaboratory.Task.Othello;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+
 public class OthelloManager : IStartable
 {
     private readonly GameObject _boardObject;
     private readonly GameObject _blackStone;
     private readonly GameObject _whiteStone;
     private GameObject _boardContainer;
+
+    private readonly StateMachine _stateMachine;
     private readonly int _boardSize;
 
     [Inject]
@@ -20,12 +24,13 @@ public class OthelloManager : IStartable
 
     public void Start()
     {
-        _boardContainer = GameObject.Find("Board");
+        _boardContainer = GameObject.Instantiate(new GameObject("BoardContainer"));
         if (_boardContainer == null)
         {
             Debug.LogError("Board container not found!");
             return;
         }
+
         BoardGeneration();
         Debug.Log("OthelloManager Start");
     }
@@ -40,5 +45,13 @@ public class OthelloManager : IStartable
                 board.transform.parent = _boardContainer.transform;
             }
         }
+    }
+
+    public void StartGame()
+    {
+    }
+
+    public void EndGame()
+    {
     }
 }

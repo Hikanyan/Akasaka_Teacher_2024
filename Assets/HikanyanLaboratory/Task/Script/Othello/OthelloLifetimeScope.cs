@@ -13,11 +13,11 @@ namespace HikanyanLaboratory.Task.Othello
         protected override void Configure(IContainerBuilder builder)
         {
             // OthelloManager の依存性を登録
-            builder.Register<OthelloManager>(Lifetime.Singleton)
-                .WithParameter("boardObject", _boardObject)
-                .WithParameter("blackStone", _blackStone)
-                .WithParameter("whiteStone", _whiteStone)
-                .WithParameter("boardSize", 8);
+            builder.Register<OthelloManager>(Lifetime.Singleton).AsSelf();
+                // .WithParameter("boardObject", _boardObject)
+                // .WithParameter("blackStone", _blackStone)
+                // .WithParameter("whiteStone", _whiteStone)
+                // .WithParameter("boardSize", 8);
             
             builder.Register<OthelloModel>(Lifetime.Scoped).AsSelf();
             builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
