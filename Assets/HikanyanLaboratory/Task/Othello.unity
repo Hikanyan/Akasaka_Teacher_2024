@@ -473,6 +473,12 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  _boardObject: {fileID: 6145213087949723253, guid: a7e7fbc1d37d09e499c835916ef02f20,
+    type: 3}
+  _blackStone: {fileID: 6145213087949723253, guid: 8aefe66659f0d564c9f6776b879828fb,
+    type: 3}
+  _whiteStone: {fileID: 6145213087949723253, guid: 1674a11c65a11104ca30516d1463b93e,
+    type: 3}
 --- !u!1 &993597518
 GameObject:
   m_ObjectHideFlags: 0

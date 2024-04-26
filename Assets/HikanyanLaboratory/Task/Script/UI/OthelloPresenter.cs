@@ -2,8 +2,8 @@
 {
     public class OthelloPresenter
     {
-        readonly private OthelloModel _model;
-        readonly private OthelloView _view;
+        private readonly OthelloModel _model;
+        private readonly OthelloView _view;
 
         public OthelloPresenter(OthelloModel model, OthelloView view)
         {

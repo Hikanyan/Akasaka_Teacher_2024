@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/HikanyanLaboratory/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/HikanyanLaboratory/Scenes/Boot.unity
+    guid: 5a0d1ca8fc37bc44da46264127e64213
+  - enabled: 1
+    path: Assets/HikanyanLaboratory/Task/Othello.unity
+    guid: e7ac0b73b45a53a4a9e12a85ae506687
   m_configObjects: {}
