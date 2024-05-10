@@ -14,17 +14,13 @@ namespace HikanyanLaboratory.Task.Othello
         {
             // OthelloManager の依存性を登録
             builder.Register<OthelloManager>(Lifetime.Singleton).AsSelf();
-            builder.Register<OthelloManager>(Lifetime.Singleton).AsSelf();
-            
-            
-            
 
-            
-                // .WithParameter("boardObject", _boardObject)
-                // .WithParameter("blackStone", _blackStone)
-                // .WithParameter("whiteStone", _whiteStone)
-                // .WithParameter("boardSize", 8);
-            
+
+            // .WithParameter("boardObject", _boardObject)
+            // .WithParameter("blackStone", _blackStone)
+            // .WithParameter("whiteStone", _whiteStone)
+            // .WithParameter("boardSize", 8);
+
             builder.Register<OthelloModel>(Lifetime.Scoped).AsSelf();
             builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
             builder.RegisterComponentInHierarchy<OthelloView>();

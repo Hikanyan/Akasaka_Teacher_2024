@@ -1,6 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
+
 namespace HikanyanLaboratory.Task.Othello
 {
     public class OthelloView : MonoBehaviour

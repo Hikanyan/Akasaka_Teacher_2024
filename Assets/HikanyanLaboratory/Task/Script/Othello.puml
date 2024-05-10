@@ -1,0 +1,103 @@
+@startuml
+
+package "Othello" {
+    package Model {
+        interface IOthelloModel {
+            +GetGameState() : OthelloGameState
+            +SetGameState(OthelloGameState) : void
+        }
+
+        class OthelloGameState {
+            +Pieces : List<GameObject>
+            +CurrentPlayer : Player
+        }
+
+        class Player {
+            +Color : int
+        }
+    }
+
+    package View {
+        class OthelloBoardView {
+            +UpdateBoard() : void
+        }
+
+        class OthelloPieceView {
+            +AnimateMove(Vector2 newPosition) : void
+        }
+    }
+
+    package Presenter {
+        class OthelloLifetimeScope {
+            +StartGame() : void
+            +EndGame() : void
+            +PlacePiece(int x, int y) : void
+            +UpdateBoard() : void
+            +AnimateMove(GameObject piece, Vector2 newPosition) : void
+            +SaveGameState() : UniTask
+            +LoadGameState() : UniTask<OthelloGameState>
+        }
+    }
+
+    package Infrastructure {
+        class OthelloRepository {
+            +SaveGameState() : UniTask
+            +LoadGameState() : UniTask<OthelloGameState>
+        }
+    }
+
+    package Animation {
+        class TweenMovement {
+            +MoveTo(GameObject target, Vector2 position) : void
+        }
+    }
+
+    package Services {
+        class GameService {
+            +StartGame() : void
+            +EndGame() : void
+            +MakeMove(int x, int y) : void
+        }
+
+        class AnimationService {
+            +AnimatePiece(GameObject piece, Vector2 position) : void
+        }
+
+        class PersistenceService {
+            +SaveState() : UniTask
+            +LoadState() : UniTask<OthelloGameState>
+        }
+    }
+
+    package Factory {
+        class GameObjectFactory {
+            +CreatePiece(color : int) : GameObject
+            +CreateBoard() : GameObject
+        }
+    }
+
+    OthelloLifetimeScope -down-> Model.IOthelloModel : configures
+    OthelloLifetimeScope -up-> View.OthelloBoardView : configures
+    OthelloLifetimeScope -up-> View.OthelloPieceView : configures
+    OthelloLifetimeScope -down-> Services.GameService : configures
+    OthelloLifetimeScope -down-> Services.AnimationService : configures
+    OthelloLifetimeScope -down-> Services.PersistenceService : configures
+    OthelloLifetimeScope -down-> Animation.TweenMovement : configures
+    OthelloLifetimeScope -down-> Infrastructure.OthelloRepository : configures
+    OthelloLifetimeScope -down-> Factory.GameObjectFactory : configures
+
+    Model.IOthelloModel <|.. Model.OthelloGameState
+    Model.IOthelloModel <|.. Model.Player
+
+    Services.GameService .down.> Model.IOthelloModel : uses
+    Services.AnimationService .down.> View.OthelloPieceView : uses
+    Services.PersistenceService .down.> Infrastructure.OthelloRepository : uses
+    View.OthelloBoardView .down.> Model.IOthelloModel : uses
+
+    Services.GameService .down.> Factory.GameObjectFactory : uses
+    View.OthelloBoardView .down.> Factory.GameObjectFactory : uses
+    View.OthelloPieceView .down.> Factory.GameObjectFactory : uses
+
+}
+
+@enduml

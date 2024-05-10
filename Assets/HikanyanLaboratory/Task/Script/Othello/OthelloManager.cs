@@ -13,14 +13,14 @@ public class OthelloManager : IStartable
     private readonly StateMachine _stateMachine;
     private readonly int _boardSize;
 
-    [Inject]
-    public OthelloManager(GameObject boardObject, GameObject blackStone, GameObject whiteStone, int boardSize = 8)
-    {
-        _boardObject = boardObject;
-        _blackStone = blackStone;
-        _whiteStone = whiteStone;
-        _boardSize = boardSize;
-    }
+    // [Inject]
+    // public OthelloManager(GameObject boardObject, GameObject blackStone, GameObject whiteStone, int boardSize = 8)
+    // {
+    //     _boardObject = boardObject;
+    //     _blackStone = blackStone;
+    //     _whiteStone = whiteStone;
+    //     _boardSize = boardSize;
+    // }
 
     public void Start()
     {
