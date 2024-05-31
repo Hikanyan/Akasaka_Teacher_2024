@@ -10,6 +10,9 @@ namespace HikanyanLaboratory.Task.Script.Othello
     public class OthelloPresenter
     {
         private readonly StateMachine _stateMachine;
+        private readonly TitleState _titleState;
+        private readonly InGameState _inGameState;
+        private readonly ResultState _resultState;
         private readonly PlayerTurnState _playerTurnState;
         private readonly AITurnState _aiTurnState;
         private readonly IOthelloModel _model;
@@ -20,8 +23,12 @@ namespace HikanyanLaboratory.Task.Script.Othello
         private readonly IPersistenceService _persistenceService;
         private readonly IGameObjectFactory _gameObjectFactory;
 
+
         public OthelloPresenter(
             StateMachine stateMachine,
+            TitleState titleState,
+            InGameState inGameState,
+            ResultState resultState,
             PlayerTurnState playerTurnState,
             AITurnState aiTurnState,
             IOthelloModel model,
@@ -33,6 +40,9 @@ namespace HikanyanLaboratory.Task.Script.Othello
             IGameObjectFactory gameObjectFactory)
         {
             _stateMachine = stateMachine;
+            _titleState = titleState;
+            _inGameState = inGameState;
+            _resultState = resultState;
             _playerTurnState = playerTurnState;
             _aiTurnState = aiTurnState;
             _model = model;
@@ -43,9 +53,33 @@ namespace HikanyanLaboratory.Task.Script.Othello
             _persistenceService = persistenceService;
             _gameObjectFactory = gameObjectFactory;
 
-            _playerTurnState.Presenter = this; // PlayerTurnStateにPresenterを設定
-            _aiTurnState.Presenter = this; // AITurnStateにPresenterを設定
+            _titleState.Presenter = this;
+            _inGameState.Presenter = this;
+            _resultState.Presenter = this;
+            _playerTurnState.Presenter = this;
+            _aiTurnState.Presenter = this;
         }
+
+        public void ShowTitleScreen()
+        {
+            // タイトル画面を表示する処理
+        }
+
+        public void HideTitleScreen()
+        {
+            // タイトル画面を非表示にする処理
+        }
+
+        public void ShowResultScreen()
+        {
+            // リザルト画面を表示する処理
+        }
+
+        public void HideResultScreen()
+        {
+            // リザルト画面を非表示にする処理
+        }
+
 
         public void StartGame()
         {
