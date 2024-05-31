@@ -15,11 +15,16 @@ package "Othello" {
         class Player {
             +Color : int
         }
+
+        class OthelloModel implements IOthelloModel {
+            +GetGameState() : OthelloGameState
+            +SetGameState(OthelloGameState) : void
+        }
     }
 
     package View {
         class OthelloBoardView {
-            +UpdateBoard() : void
+            +UpdateBoard(OthelloGameState) : void
         }
 
         class OthelloPieceView {
@@ -28,7 +33,7 @@ package "Othello" {
     }
 
     package Presenter {
-        class OthelloLifetimeScope {
+        class OthelloPresenter {
             +StartGame() : void
             +EndGame() : void
             +PlacePiece(int x, int y) : void
@@ -36,12 +41,19 @@ package "Othello" {
             +AnimateMove(GameObject piece, Vector2 newPosition) : void
             +SaveGameState() : UniTask
             +LoadGameState() : UniTask<OthelloGameState>
+            +SwitchToAITurn() : void
+            +SwitchToPlayerTurn() : void
         }
     }
 
     package Infrastructure {
-        class OthelloRepository {
-            +SaveGameState() : UniTask
+        interface IOthelloRepository {
+            +SaveGameState(OthelloGameState) : UniTask
+            +LoadGameState() : UniTask<OthelloGameState>
+        }
+
+        class OthelloRepository implements IOthelloRepository {
+            +SaveGameState(OthelloGameState) : UniTask
             +LoadGameState() : UniTask<OthelloGameState>
         }
     }
@@ -53,51 +65,124 @@ package "Othello" {
     }
 
     package Services {
-        class GameService {
+        interface IGameService {
             +StartGame() : void
             +EndGame() : void
             +MakeMove(int x, int y) : void
         }
 
-        class AnimationService {
+        class GameService implements IGameService {
+            +StartGame() : void
+            +EndGame() : void
+            +MakeMove(int x, int y) : void
+        }
+
+        interface IAnimationService {
             +AnimatePiece(GameObject piece, Vector2 position) : void
         }
 
-        class PersistenceService {
-            +SaveState() : UniTask
+        class AnimationService implements IAnimationService {
+            +AnimatePiece(GameObject piece, Vector2 position) : void
+        }
+
+        interface IPersistenceService {
+            +SaveState(OthelloGameState) : UniTask
+            +LoadState() : UniTask<OthelloGameState>
+        }
+
+        class PersistenceService implements IPersistenceService {
+            +SaveState(OthelloGameState) : UniTask
             +LoadState() : UniTask<OthelloGameState>
         }
     }
 
     package Factory {
-        class GameObjectFactory {
+        interface IGameObjectFactory {
+            +CreatePiece(color : int) : GameObject
+            +CreateBoard() : GameObject
+        }
+
+        class GameObjectFactory implements IGameObjectFactory {
             +CreatePiece(color : int) : GameObject
             +CreateBoard() : GameObject
         }
     }
 
+    package StateMachine {
+        class State {
+            +Enter() : void
+            +Execute() : void
+            +Exit() : void
+        }
+
+        class PlayerTurnState extends State {
+            +Enter() : void
+            +Execute() : void
+            +Exit() : void
+        }
+
+        class AITurnState extends State {
+            +Enter() : void
+            +Execute() : void
+            +Exit() : void
+        }
+
+        class StateMachine {
+            +Tick() : void
+            +ChangeState(State newState) : void
+        }
+    }
+
+    class OthelloLifetimeScope {
+        +Configure(IContainerBuilder builder) : void
+    }
+
     OthelloLifetimeScope -down-> Model.IOthelloModel : configures
     OthelloLifetimeScope -up-> View.OthelloBoardView : configures
     OthelloLifetimeScope -up-> View.OthelloPieceView : configures
-    OthelloLifetimeScope -down-> Services.GameService : configures
-    OthelloLifetimeScope -down-> Services.AnimationService : configures
-    OthelloLifetimeScope -down-> Services.PersistenceService : configures
+    OthelloLifetimeScope -down-> Services.IGameService : configures
+    OthelloLifetimeScope -down-> Services.IAnimationService : configures
+    OthelloLifetimeScope -down-> Services.IPersistenceService : configures
     OthelloLifetimeScope -down-> Animation.TweenMovement : configures
-    OthelloLifetimeScope -down-> Infrastructure.OthelloRepository : configures
-    OthelloLifetimeScope -down-> Factory.GameObjectFactory : configures
+    OthelloLifetimeScope -down-> Infrastructure.IOthelloRepository : configures
+    OthelloLifetimeScope -down-> Factory.IGameObjectFactory : configures
+    OthelloLifetimeScope -down-> Presenter.OthelloPresenter : configures
+    OthelloLifetimeScope -down-> StateMachine.StateMachine : configures
 
+    Model.IOthelloModel <|.. Model.OthelloModel
     Model.IOthelloModel <|.. Model.OthelloGameState
     Model.IOthelloModel <|.. Model.Player
 
-    Services.GameService .down.> Model.IOthelloModel : uses
-    Services.AnimationService .down.> View.OthelloPieceView : uses
-    Services.PersistenceService .down.> Infrastructure.OthelloRepository : uses
+    Infrastructure.IOthelloRepository <|.. Infrastructure.OthelloRepository
+
+    Services.IGameService <|.. Services.GameService
+    Services.IAnimationService <|.. Services.AnimationService
+    Services.IPersistenceService <|.. Services.PersistenceService
+
+    Factory.IGameObjectFactory <|.. Factory.GameObjectFactory
+
+    StateMachine.State <|-- StateMachine.PlayerTurnState
+    StateMachine.State <|-- StateMachine.AITurnState
+
+    Presenter.OthelloPresenter .down.> Model.IOthelloModel : uses
+    Presenter.OthelloPresenter .down.> View.OthelloBoardView : uses
+    Presenter.OthelloPresenter .down.> View.OthelloPieceView : uses
+    Presenter.OthelloPresenter .down.> Services.IGameService : uses
+    Presenter.OthelloPresenter .down.> Services.IAnimationService : uses
+    Presenter.OthelloPresenter .down.> Services.IPersistenceService : uses
+    Presenter.OthelloPresenter .down.> Animation.TweenMovement : uses
+    Presenter.OthelloPresenter .down.> Infrastructure.IOthelloRepository : uses
+    Presenter.OthelloPresenter .down.> Factory.IGameObjectFactory : uses
+    Presenter.OthelloPresenter .down.> StateMachine.StateMachine : uses
+
+    Services.IGameService .down.> Model.IOthelloModel : uses
+    Services.IAnimationService .down.> View.OthelloPieceView : uses
+    Services.IPersistenceService .down.> Infrastructure.IOthelloRepository : uses
     View.OthelloBoardView .down.> Model.IOthelloModel : uses
 
-    Services.GameService .down.> Factory.GameObjectFactory : uses
-    View.OthelloBoardView .down.> Factory.GameObjectFactory : uses
-    View.OthelloPieceView .down.> Factory.GameObjectFactory : uses
-
+    Services.IGameService .down.> Factory.IGameObjectFactory : uses
+    View.OthelloBoardView .down.> Factory.IGameObjectFactory : uses
+    View.OthelloPieceView .down.> Factory.IGameObjectFactory : uses
 }
 
 @enduml

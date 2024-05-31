@@ -1,31 +1,44 @@
-using UnityEngine;
+using HikanyanLaboratory.Task.Othello;
+using HikanyanLaboratory.Task.Script.Othello.Animation;
+using HikanyanLaboratory.Task.Script.Othello.Factory;
+using HikanyanLaboratory.Task.Script.Othello.Infrastructure;
+using HikanyanLaboratory.Task.Script.Othello.Model;
+using HikanyanLaboratory.Task.Script.Othello.Services;
+using HikanyanLaboratory.Task.Script.Othello.View;
 using VContainer;
 using VContainer.Unity;
 
-namespace HikanyanLaboratory.Task.Othello
+namespace HikanyanLaboratory.Task.Script.Othello
 {
     public class OthelloLifetimeScope : LifetimeScope
     {
-        [SerializeField] GameObject _boardObject;
-        [SerializeField] GameObject _blackStone;
-        [SerializeField] GameObject _whiteStone;
-
         protected override void Configure(IContainerBuilder builder)
         {
-            // OthelloManager の依存性を登録
-            builder.Register<OthelloManager>(Lifetime.Singleton).AsSelf();
+            // Model
+            builder.Register<IOthelloModel, IOthelloModel>(Lifetime.Singleton);
+            builder.Register<OthelloGameState>(Lifetime.Singleton);
+            builder.Register<Player>(Lifetime.Singleton);
 
+            // View
+            builder.RegisterComponentInHierarchy<OthelloBoardView>();
+            builder.RegisterComponentInHierarchy<OthelloPieceView>();
 
-            // .WithParameter("boardObject", _boardObject)
-            // .WithParameter("blackStone", _blackStone)
-            // .WithParameter("whiteStone", _whiteStone)
-            // .WithParameter("boardSize", 8);
+            // Services
+            builder.Register<IGameService, GameService>(Lifetime.Singleton);
+            builder.Register<IAnimationService, AnimationService>(Lifetime.Singleton);
+            builder.Register<IPersistenceService, PersistenceService>(Lifetime.Singleton);
 
-            builder.Register<OthelloModel>(Lifetime.Scoped).AsSelf();
-            builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
-            builder.RegisterComponentInHierarchy<OthelloView>();
+            // Infrastructure
+            builder.Register<IOthelloRepository, OthelloRepository>(Lifetime.Singleton);
 
-            builder.RegisterEntryPoint<OthelloManager>();
+            // Animation
+            builder.Register<TweenMovement>(Lifetime.Singleton);
+
+            // Factory
+            builder.Register<GameObjectFactory>(Lifetime.Singleton);
+
+            // Presenter
+            builder.Register<OthelloPresenter>(Lifetime.Singleton);
         }
     }
 }
