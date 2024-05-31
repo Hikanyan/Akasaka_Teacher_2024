@@ -1,21 +1,18 @@
 ﻿using Cysharp.Threading.Tasks;
-using UnityEngine;
-using HikanyanLaboratory.Task.Script.Othello.Model;
-using HikanyanLaboratory.Task.Script.Othello.View;
-using HikanyanLaboratory.Task.Script.Othello.Services;
 using HikanyanLaboratory.Task.Script.Othello.Factory;
+using HikanyanLaboratory.Task.Script.Othello.Model;
+using HikanyanLaboratory.Task.Script.Othello.Services;
+using HikanyanLaboratory.Task.Script.Othello.View;
+using UnityEngine;
 
-namespace HikanyanLaboratory.Task.Script.Othello
+namespace HikanyanLaboratory.Task.Script.Othello.Scene
 {
     /// <summary>
     /// Othelloのプレゼンター
     /// </summary>
-    public class OthelloPresenter
+    public abstract class OthelloPresenter
     {
         private readonly StateMachine _stateMachine;
-        private readonly TitleState _titleState;
-        private readonly InGameState _inGameState;
-        private readonly ResultState _resultState;
         private readonly PlayerTurnState _playerTurnState;
         private readonly AITurnState _aiTurnState;
         private readonly IOthelloModel _model;
@@ -25,13 +22,12 @@ namespace HikanyanLaboratory.Task.Script.Othello
         private readonly IAnimationService _animationService;
         private readonly IPersistenceService _persistenceService;
         private readonly IGameObjectFactory _gameObjectFactory;
+        private readonly SceneLoader _sceneLoader;
 
 
         public OthelloPresenter(
             StateMachine stateMachine,
-            TitleState titleState,
             InGameState inGameState,
-            ResultState resultState,
             PlayerTurnState playerTurnState,
             AITurnState aiTurnState,
             IOthelloModel model,
@@ -40,12 +36,10 @@ namespace HikanyanLaboratory.Task.Script.Othello
             IGameService gameService,
             IAnimationService animationService,
             IPersistenceService persistenceService,
-            IGameObjectFactory gameObjectFactory)
+            IGameObjectFactory gameObjectFactory,
+            SceneLoader sceneLoader)
         {
             _stateMachine = stateMachine;
-            _titleState = titleState;
-            _inGameState = inGameState;
-            _resultState = resultState;
             _playerTurnState = playerTurnState;
             _aiTurnState = aiTurnState;
             _model = model;
@@ -55,10 +49,8 @@ namespace HikanyanLaboratory.Task.Script.Othello
             _animationService = animationService;
             _persistenceService = persistenceService;
             _gameObjectFactory = gameObjectFactory;
+            _sceneLoader = sceneLoader;
 
-            _titleState.Presenter = this;
-            _inGameState.Presenter = this;
-            _resultState.Presenter = this;
             _playerTurnState.Presenter = this;
             _aiTurnState.Presenter = this;
         }
@@ -84,8 +76,9 @@ namespace HikanyanLaboratory.Task.Script.Othello
         }
 
 
-        public void StartGame()
+        public async void StartGame()
         {
+            await _sceneLoader.LoadSceneAsync("Othello");
             _gameService.StartGame();
             _stateMachine.ChangeState(_playerTurnState);
             UpdateBoard();
@@ -94,6 +87,7 @@ namespace HikanyanLaboratory.Task.Script.Othello
         public void EndGame()
         {
             _gameService.EndGame();
+            _sceneLoader.LoadSceneAsync("ResultScene").Forget();
         }
 
         public void PlacePiece(int x, int y)
@@ -135,6 +129,11 @@ namespace HikanyanLaboratory.Task.Script.Othello
         public void SwitchToPlayerTurn()
         {
             _stateMachine.ChangeState(_playerTurnState);
+        }
+
+        public async void SwitchToTitleState()
+        {
+            await _sceneLoader.LoadSceneAsync("TitleScene");
         }
     }
 }

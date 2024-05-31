@@ -1,4 +1,6 @@
-﻿namespace HikanyanLaboratory.Task.Script.Othello
+﻿using HikanyanLaboratory.Task.Script.Othello.Scene;
+
+namespace HikanyanLaboratory.Task.Script.Othello
 {
     public class InGameState : State
     {

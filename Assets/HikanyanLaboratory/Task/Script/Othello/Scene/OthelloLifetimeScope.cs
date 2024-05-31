@@ -1,14 +1,14 @@
-using VContainer;
-using VContainer.Unity;
-using UnityEngine;
-using HikanyanLaboratory.Task.Script.Othello.Model;
-using HikanyanLaboratory.Task.Script.Othello.View;
-using HikanyanLaboratory.Task.Script.Othello.Services;
-using HikanyanLaboratory.Task.Script.Othello.Infrastructure;
 using HikanyanLaboratory.Task.Script.Othello.Animation;
 using HikanyanLaboratory.Task.Script.Othello.Factory;
+using HikanyanLaboratory.Task.Script.Othello.Infrastructure;
+using HikanyanLaboratory.Task.Script.Othello.Model;
+using HikanyanLaboratory.Task.Script.Othello.Services;
+using HikanyanLaboratory.Task.Script.Othello.View;
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
-namespace HikanyanLaboratory.Task.Script.Othello
+namespace HikanyanLaboratory.Task.Script.Othello.Scene
 {
     /// <summary>
     /// Othelloのライフタイムスコープ
@@ -50,8 +50,12 @@ namespace HikanyanLaboratory.Task.Script.Othello
 
             // StateMachine
             builder.Register<StateMachine>(Lifetime.Singleton);
-            builder.Register<PlayerTurnState>(Lifetime.Singleton);
-            builder.Register<AITurnState>(Lifetime.Singleton);
+            builder.Register<PlayerTurnState>(Lifetime.Singleton).AsSelf();
+            builder.Register<AITurnState>(Lifetime.Singleton).AsSelf();
+            builder.Register<InGameState>(Lifetime.Singleton).AsSelf();
+
+            // Scene
+            builder.RegisterComponentInHierarchy<SceneLoader>();
 
             // Presenter
             builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
@@ -60,20 +64,13 @@ namespace HikanyanLaboratory.Task.Script.Othello
             builder.RegisterBuildCallback(container =>
             {
                 var presenter = container.Resolve<OthelloPresenter>();
-
-                var titleState = container.Resolve<TitleState>();
-                var inGameState = container.Resolve<InGameState>();
-                var resultState = container.Resolve<ResultState>();
-
                 var playerTurnState = container.Resolve<PlayerTurnState>();
                 var aiTurnState = container.Resolve<AITurnState>();
-
-                titleState.Presenter = presenter;
-                inGameState.Presenter = presenter;
-                resultState.Presenter = presenter;
+                var inGameState = container.Resolve<InGameState>();
 
                 playerTurnState.Presenter = presenter;
                 aiTurnState.Presenter = presenter;
+                inGameState.Presenter = presenter;
             });
         }
     }

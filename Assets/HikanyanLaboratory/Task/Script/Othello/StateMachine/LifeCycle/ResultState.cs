@@ -1,4 +1,7 @@
-﻿namespace HikanyanLaboratory.Task.Script.Othello
+﻿using HikanyanLaboratory.Task.Script.Othello.Scene;
+using UnityEngine;
+
+namespace HikanyanLaboratory.Task.Script.Othello
 {
     public class ResultState : State
     {
@@ -12,7 +15,10 @@
 
         public override void Execute()
         {
-            // リザルト画面での実行処理（例: 入力待ち）
+            if (Input.GetKeyDown(KeyCode.Space)) // スペースキーでタイトル画面に戻る
+            {
+                Presenter.SwitchToTitleState();
+            }
         }
 
         public override void Exit()
