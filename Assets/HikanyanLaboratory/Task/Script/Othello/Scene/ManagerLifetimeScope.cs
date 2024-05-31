@@ -16,8 +16,6 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             builder.Register<ResultState>(Lifetime.Scoped);
 
             builder.RegisterEntryPoint<ManagerPresenter>();
-            
-            builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
         }
     }
 }

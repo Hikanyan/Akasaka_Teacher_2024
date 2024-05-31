@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace HikanyanLaboratory.Task.Script.Othello.Scene
@@ -8,26 +7,41 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
     {
         public async UniTask LoadSceneAsync(string sceneName)
         {
-            var loadOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            while (!loadOperation.isDone)
+            if (!IsSceneLoaded(sceneName))
             {
-                await UniTask.Yield();
-            }
-
-            // 新しいシーンをアクティブに設定
-            SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
-        }
-
-        public async UniTask UnloadSceneAsync(string sceneName)
-        {
-            if (SceneManager.GetSceneByName(sceneName).isLoaded)
-            {
-                var unloadOperation = SceneManager.UnloadSceneAsync(sceneName);
-                while (!unloadOperation.isDone)
+                var loadSceneOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+                while (!loadSceneOperation.isDone)
                 {
                     await UniTask.Yield();
                 }
             }
+        }
+
+        public async UniTask UnloadSceneAsync(string sceneName)
+        {
+            if (IsSceneLoaded(sceneName))
+            {
+                var unloadSceneOperation = SceneManager.UnloadSceneAsync(sceneName);
+                while (!unloadSceneOperation.isDone)
+                {
+                    await UniTask.Yield();
+                }
+            }
+        }
+
+        
+        private bool IsSceneLoaded(string sceneName)
+        {
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                UnityEngine.SceneManagement.Scene scene = SceneManager.GetSceneAt(i);
+                if (scene.name == sceneName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

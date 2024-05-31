@@ -1,4 +1,5 @@
-﻿using VContainer.Unity;
+﻿using Cysharp.Threading.Tasks;
+using VContainer.Unity;
 
 namespace HikanyanLaboratory.Task.Script.Othello.Scene
 {
@@ -35,7 +36,7 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
         public void Start()
         {
             // 初期ステートを設定
-            _stateMachine.ChangeState(_titleState);
+            ChangeToTitleState();
         }
 
         public void Tick()
@@ -45,13 +46,21 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
         }
 
         // ステートの切り替え例
+        public void ChangeToTitleState()
+        {
+            _managerSceneController.LoadTitleScene();
+            _stateMachine.ChangeState(_titleState);
+        }
+
         public void ChangeToInGameState()
         {
+            _managerSceneController.LoadGameScene();
             _stateMachine.ChangeState(_inGameState);
         }
 
         public void ChangeToResultState()
         {
+            _managerSceneController.LoadResultScene();
             _stateMachine.ChangeState(_resultState);
         }
     }

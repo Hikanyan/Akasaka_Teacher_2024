@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using Cysharp.Threading.Tasks;
 using VContainer;
+using VContainer.Unity;
 
 namespace HikanyanLaboratory.Task.Script.Othello.Scene
 {
-    public class ManagerSceneController
+    public class ManagerSceneController :IStartable
     {
         private readonly SceneLoader _sceneLoader;
 
@@ -13,7 +14,7 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             _sceneLoader = sceneLoader;
         }
 
-        private async void Start()
+        public async void Start()
         {
             await _sceneLoader.LoadSceneAsync("TitleScene");
         }
