@@ -10,6 +10,9 @@ using HikanyanLaboratory.Task.Script.Othello.Factory;
 
 namespace HikanyanLaboratory.Task.Script.Othello
 {
+    /// <summary>
+    /// Othelloのライフタイムスコープ
+    /// </summary>
     public class OthelloLifetimeScope : LifetimeScope
     {
         [SerializeField] private GameObject _blackStonePrefab;
@@ -53,12 +56,22 @@ namespace HikanyanLaboratory.Task.Script.Othello
             // Presenter
             builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
 
-            // Presenterの初期化後にPlayerTurnStateとAITurnStateに設定
+            // Presenterの初期化後にStateにPresenterを設定
             builder.RegisterBuildCallback(container =>
             {
                 var presenter = container.Resolve<OthelloPresenter>();
+
+                var titleState = container.Resolve<TitleState>();
+                var inGameState = container.Resolve<InGameState>();
+                var resultState = container.Resolve<ResultState>();
+
                 var playerTurnState = container.Resolve<PlayerTurnState>();
                 var aiTurnState = container.Resolve<AITurnState>();
+
+                titleState.Presenter = presenter;
+                inGameState.Presenter = presenter;
+                resultState.Presenter = presenter;
+
                 playerTurnState.Presenter = presenter;
                 aiTurnState.Presenter = presenter;
             });

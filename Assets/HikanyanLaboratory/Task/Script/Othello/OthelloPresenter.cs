@@ -7,6 +7,9 @@ using HikanyanLaboratory.Task.Script.Othello.Factory;
 
 namespace HikanyanLaboratory.Task.Script.Othello
 {
+    /// <summary>
+    /// Othelloのプレゼンター
+    /// </summary>
     public class OthelloPresenter
     {
         private readonly StateMachine _stateMachine;
