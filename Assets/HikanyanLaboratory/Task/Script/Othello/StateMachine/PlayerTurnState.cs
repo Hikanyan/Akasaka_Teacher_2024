@@ -1,32 +1,34 @@
-﻿using UnityEngine;
+﻿using HikanyanLaboratory.Task.Script.Othello.Model;
+using UnityEngine;
 
 namespace HikanyanLaboratory.Task.Script.Othello
 {
     public class PlayerTurnState : State
     {
-        private readonly OthelloPresenter _presenter;
+        private readonly IOthelloModel _model;
+        public OthelloPresenter Presenter { get; set; }
 
-        public PlayerTurnState(OthelloPresenter presenter)
+        public PlayerTurnState(IOthelloModel model)
         {
-            _presenter = presenter;
+            _model = model;
         }
 
         public override void Enter()
         {
-            Debug.Log("Player Turn: Enter");
-            // プレイヤーターン開始時の処理を実装
+            // Enter時の処理
+            Debug.Log("PlayerTurnState");
         }
 
         public override void Execute()
         {
-            Debug.Log("Player Turn: Execute");
-            // プレイヤーターンの実行中の処理を実装
+            // 実行時の処理
+            Debug.Log("PlayerTurnState Execute");
         }
 
         public override void Exit()
         {
-            Debug.Log("Player Turn: Exit");
-            // プレイヤーターン終了時の処理を実装
+            // Exit時の処理
+            Debug.Log("PlayerTurnState Exit");
         }
     }
 }

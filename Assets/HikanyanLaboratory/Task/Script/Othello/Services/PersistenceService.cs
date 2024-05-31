@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using HikanyanLaboratory.Task.Script.Othello.Model;
@@ -8,14 +9,14 @@ namespace HikanyanLaboratory.Task.Script.Othello.Services
     /// <summary>
     /// SaveとLoadを行う
     /// </summary>
-    public abstract class PersistenceService : IPersistenceService
+    public class PersistenceService : IPersistenceService
     {
         private const string SaveFilePath = "OthelloSaveData.json";
 
         public async UniTask SaveState(OthelloGameState gameState)
         {
             string json = JsonUtility.ToJson(gameState);
-            using StreamWriter writer = new StreamWriter(SaveFilePath);
+            await using StreamWriter writer = new StreamWriter(SaveFilePath);
             await writer.WriteAsync(json);
         }
 

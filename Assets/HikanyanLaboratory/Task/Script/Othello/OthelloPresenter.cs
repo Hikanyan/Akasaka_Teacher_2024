@@ -7,13 +7,13 @@ using HikanyanLaboratory.Task.Script.Othello.Factory;
 
 namespace HikanyanLaboratory.Task.Script.Othello
 {
-    public abstract class OthelloPresenter
+    public class OthelloPresenter
     {
         private readonly StateMachine _stateMachine;
         private readonly PlayerTurnState _playerTurnState;
         private readonly AITurnState _aiTurnState;
         private readonly IOthelloModel _model;
-        private readonly OthelloBoardView _boardView;
+        private readonly OthelloBoardGenerator _boardGenerator;
         private readonly OthelloPieceView _pieceView;
         private readonly IGameService _gameService;
         private readonly IAnimationService _animationService;
@@ -25,7 +25,7 @@ namespace HikanyanLaboratory.Task.Script.Othello
             PlayerTurnState playerTurnState,
             AITurnState aiTurnState,
             IOthelloModel model,
-            OthelloBoardView boardView,
+            OthelloBoardGenerator boardGenerator,
             OthelloPieceView pieceView,
             IGameService gameService,
             IAnimationService animationService,
@@ -36,12 +36,15 @@ namespace HikanyanLaboratory.Task.Script.Othello
             _playerTurnState = playerTurnState;
             _aiTurnState = aiTurnState;
             _model = model;
-            _boardView = boardView;
+            _boardGenerator = boardGenerator;
             _pieceView = pieceView;
             _gameService = gameService;
             _animationService = animationService;
             _persistenceService = persistenceService;
             _gameObjectFactory = gameObjectFactory;
+
+            _playerTurnState.Presenter = this; // PlayerTurnStateにPresenterを設定
+            _aiTurnState.Presenter = this; // AITurnStateにPresenterを設定
         }
 
         public void StartGame()
@@ -66,7 +69,7 @@ namespace HikanyanLaboratory.Task.Script.Othello
         public void UpdateBoard()
         {
             OthelloGameState gameState = _model.GetGameState();
-            _boardView.UpdateBoard(gameState);
+            _boardGenerator.UpdateBoard(gameState);
         }
 
         public void AnimateMove(GameObject piece, Vector2 newPosition)
