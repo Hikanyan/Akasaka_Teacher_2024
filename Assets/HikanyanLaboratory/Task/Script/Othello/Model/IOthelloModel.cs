@@ -1,6 +1,8 @@
 ﻿namespace HikanyanLaboratory.Task.Script.Othello.Model
 {
-    public class IOthelloModel
+    public interface IOthelloModel
     {
+        OthelloGameState GetGameState();
+        void SetGameState(OthelloGameState gameState);
     }
 }

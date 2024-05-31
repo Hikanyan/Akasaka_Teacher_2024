@@ -1,7 +1,9 @@
-﻿namespace HikanyanLaboratory.Task.Script.Othello.Services
+﻿using UnityEngine;
+
+namespace HikanyanLaboratory.Task.Script.Othello.Services
 {
-    public class IAnimationService
+    public interface IAnimationService
     {
-        
+        void AnimatePiece(GameObject piece, Vector2 position);
     }
 }

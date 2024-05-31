@@ -1,4 +1,4 @@
-﻿namespace HikanyanLaboratory.Task.Script.Othello.StateMachine
+﻿namespace HikanyanLaboratory.Task.Script.Othello
 {
     public abstract class State
     {

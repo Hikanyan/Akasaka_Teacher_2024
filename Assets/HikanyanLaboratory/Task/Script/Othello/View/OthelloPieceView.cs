@@ -1,7 +1,8 @@
-﻿namespace HikanyanLaboratory.Task.Script.Othello.View
+﻿using UnityEngine;
+
+namespace HikanyanLaboratory.Task.Script.Othello.View
 {
-    public class OthelloPieceView
+    public class OthelloPieceView : MonoBehaviour
     {
-        
     }
 }
