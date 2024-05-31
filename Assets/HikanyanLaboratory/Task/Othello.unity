@@ -209,13 +209,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119858711}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
+  m_LocalPosition: {x: 3, y: 10, z: -2.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1053389233}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
 --- !u!114 &119858715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436,7 +436,7 @@ GameObject:
   - component: {fileID: 911242278}
   - component: {fileID: 911242279}
   m_Layer: 0
-  m_Name: OthelloManager
+  m_Name: OthelloLifetimeScope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -473,12 +473,6 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  _boardObject: {fileID: 6145213087949723253, guid: a7e7fbc1d37d09e499c835916ef02f20,
-    type: 3}
-  _blackStone: {fileID: 6145213087949723253, guid: 8aefe66659f0d564c9f6776b879828fb,
-    type: 3}
-  _whiteStone: {fileID: 6145213087949723253, guid: 1674a11c65a11104ca30516d1463b93e,
-    type: 3}
 --- !u!1 &993597518
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,6 +969,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1726840323}
+  - component: {fileID: 1726840325}
   - component: {fileID: 1726840324}
   m_Layer: 0
   m_Name: ---UI-------------
@@ -1009,11 +1004,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1726840322}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d83857195c6445c84ebb09fc7f7cff5, type: 3}
+  m_Script: {fileID: 11500000, guid: 86bde65d06ca404a8ded77358db16dc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerName1Text: {fileID: 625943491}
-  _playerName2Text: {fileID: 1581006090}
+--- !u!114 &1726840325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726840322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fa2c3d66a764ce1a039c0ab665f9e34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridSize: 8
+  tilePrefab: {fileID: 6145213087949723253, guid: a7e7fbc1d37d09e499c835916ef02f20,
+    type: 3}
 --- !u!1 &1938505578
 GameObject:
   m_ObjectHideFlags: 0

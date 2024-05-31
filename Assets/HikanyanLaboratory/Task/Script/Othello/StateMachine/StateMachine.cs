@@ -1,6 +1,6 @@
 ﻿using VContainer.Unity;
 
-namespace HikanyanLaboratory.Task.Othello
+namespace HikanyanLaboratory.Task.Script.Othello
 {
     public class StateMachine : ITickable
     {
