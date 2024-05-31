@@ -55,7 +55,14 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             builder.Register<InGameState>(Lifetime.Singleton).AsSelf();
 
             // Scene
-            builder.RegisterComponentInHierarchy<SceneLoader>();
+            // 親コンテナからSceneLoaderを取得
+            var parentScope = FindObjectOfType<ManagerLifetimeScope>();
+            if (parentScope == null)
+            {
+                var parentContainer = parentScope.Container;
+                var sceneLoader = parentContainer.Resolve<SceneLoader>();
+                builder.RegisterInstance(sceneLoader); // Presenter
+            }
 
             // Presenter
             builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
@@ -66,11 +73,9 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
                 var presenter = container.Resolve<OthelloPresenter>();
                 var playerTurnState = container.Resolve<PlayerTurnState>();
                 var aiTurnState = container.Resolve<AITurnState>();
-                var inGameState = container.Resolve<InGameState>();
 
                 playerTurnState.Presenter = presenter;
                 aiTurnState.Presenter = presenter;
-                inGameState.Presenter = presenter;
             });
         }
     }

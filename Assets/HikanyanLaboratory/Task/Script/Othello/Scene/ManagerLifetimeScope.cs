@@ -8,12 +8,16 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Register<SceneLoader>(Lifetime.Singleton);
-            builder.Register<StateMachine>(Lifetime.Singleton);
-            builder.Register<ManagerPresenter>(Lifetime.Singleton);
+            builder.Register<ManagerSceneController>(Lifetime.Singleton);
 
-            // builder.Register<TitleLifetimeScope>(Lifetime.Singleton);
-            // builder.Register<InGameLifetimeScope>(Lifetime.Singleton);
-            // builder.Register<ResultLifetimeScope>(Lifetime.Singleton);
+            builder.Register<StateMachine>(Lifetime.Singleton);
+            builder.Register<TitleState>(Lifetime.Scoped);
+            builder.Register<InGameState>(Lifetime.Scoped);
+            builder.Register<ResultState>(Lifetime.Scoped);
+
+            builder.RegisterEntryPoint<ManagerPresenter>();
+            
+            builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
         }
     }
 }

@@ -27,7 +27,6 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
 
         public OthelloPresenter(
             StateMachine stateMachine,
-            InGameState inGameState,
             PlayerTurnState playerTurnState,
             AITurnState aiTurnState,
             IOthelloModel model,
