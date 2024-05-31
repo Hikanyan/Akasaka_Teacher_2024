@@ -473,6 +473,12 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  _blackStonePrefab: {fileID: 6145213087949723253, guid: 8aefe66659f0d564c9f6776b879828fb,
+    type: 3}
+  _whiteStonePrefab: {fileID: 6145213087949723253, guid: 1674a11c65a11104ca30516d1463b93e,
+    type: 3}
+  _boardPrefab: {fileID: 6145213087949723253, guid: a7e7fbc1d37d09e499c835916ef02f20,
+    type: 3}
 --- !u!1 &993597518
 GameObject:
   m_ObjectHideFlags: 0
@@ -1019,9 +1025,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fa2c3d66a764ce1a039c0ab665f9e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: 8
-  tilePrefab: {fileID: 6145213087949723253, guid: a7e7fbc1d37d09e499c835916ef02f20,
-    type: 3}
 --- !u!1 &1938505578
 GameObject:
   m_ObjectHideFlags: 0

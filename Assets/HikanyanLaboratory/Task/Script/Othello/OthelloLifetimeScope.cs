@@ -24,7 +24,7 @@ namespace HikanyanLaboratory.Task.Script.Othello
             builder.Register<Player>(Lifetime.Singleton);
 
             // View
-            builder.RegisterComponentInHierarchy<OthelloBoardView>()
+            builder.RegisterComponentInHierarchy<OthelloBoardGenerator>()
                 .WithParameter("boardPrefab", _boardPrefab);
             builder.RegisterComponentInHierarchy<OthelloPieceView>();
 
@@ -51,7 +51,17 @@ namespace HikanyanLaboratory.Task.Script.Othello
             builder.Register<AITurnState>(Lifetime.Singleton);
 
             // Presenter
-            builder.Register<OthelloPresenter>(Lifetime.Singleton);
+            builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
+
+            // Presenterの初期化後にPlayerTurnStateとAITurnStateに設定
+            builder.RegisterBuildCallback(container =>
+            {
+                var presenter = container.Resolve<OthelloPresenter>();
+                var playerTurnState = container.Resolve<PlayerTurnState>();
+                var aiTurnState = container.Resolve<AITurnState>();
+                playerTurnState.Presenter = presenter;
+                aiTurnState.Presenter = presenter;
+            });
         }
     }
 }
