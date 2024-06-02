@@ -1,15 +1,18 @@
-using VContainer;
-using VContainer.Unity;
-using UnityEngine;
-using HikanyanLaboratory.Task.Script.Othello.Model;
-using HikanyanLaboratory.Task.Script.Othello.View;
-using HikanyanLaboratory.Task.Script.Othello.Services;
-using HikanyanLaboratory.Task.Script.Othello.Infrastructure;
 using HikanyanLaboratory.Task.Script.Othello.Animation;
 using HikanyanLaboratory.Task.Script.Othello.Factory;
+using HikanyanLaboratory.Task.Script.Othello.Infrastructure;
+using HikanyanLaboratory.Task.Script.Othello.Model;
+using HikanyanLaboratory.Task.Script.Othello.Services;
+using HikanyanLaboratory.Task.Script.Othello.View;
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
-namespace HikanyanLaboratory.Task.Script.Othello
+namespace HikanyanLaboratory.Task.Script.Othello.Scene
 {
+    /// <summary>
+    /// Othelloのライフタイムスコープ
+    /// </summary>
     public class OthelloLifetimeScope : LifetimeScope
     {
         [SerializeField] private GameObject _blackStonePrefab;
@@ -47,18 +50,30 @@ namespace HikanyanLaboratory.Task.Script.Othello
 
             // StateMachine
             builder.Register<StateMachine>(Lifetime.Singleton);
-            builder.Register<PlayerTurnState>(Lifetime.Singleton);
-            builder.Register<AITurnState>(Lifetime.Singleton);
+            builder.Register<PlayerTurnState>(Lifetime.Singleton).AsSelf();
+            builder.Register<AITurnState>(Lifetime.Singleton).AsSelf();
+            builder.Register<InGameState>(Lifetime.Singleton).AsSelf();
+
+            // Scene
+            // 親コンテナからSceneLoaderを取得
+            var parentScope = FindObjectOfType<ManagerLifetimeScope>();
+            if (parentScope == null)
+            {
+                var parentContainer = parentScope.Container;
+                var sceneLoader = parentContainer.Resolve<SceneLoader>();
+                builder.RegisterInstance(sceneLoader); // Presenter
+            }
 
             // Presenter
             builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
 
-            // Presenterの初期化後にPlayerTurnStateとAITurnStateに設定
+            // Presenterの初期化後にStateにPresenterを設定
             builder.RegisterBuildCallback(container =>
             {
                 var presenter = container.Resolve<OthelloPresenter>();
                 var playerTurnState = container.Resolve<PlayerTurnState>();
                 var aiTurnState = container.Resolve<AITurnState>();
+
                 playerTurnState.Presenter = presenter;
                 aiTurnState.Presenter = presenter;
             });

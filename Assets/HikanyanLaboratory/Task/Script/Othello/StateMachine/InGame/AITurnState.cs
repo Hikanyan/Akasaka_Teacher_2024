@@ -1,4 +1,5 @@
 ﻿using HikanyanLaboratory.Task.Script.Othello.Model;
+using HikanyanLaboratory.Task.Script.Othello.Scene;
 
 namespace HikanyanLaboratory.Task.Script.Othello
 {
