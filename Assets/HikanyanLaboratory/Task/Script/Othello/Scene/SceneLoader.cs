@@ -7,6 +7,7 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
     {
         public async UniTask LoadSceneAsync(string sceneName)
         {
+            // シーンが読み込まれていない場合は読み込む
             if (!IsSceneLoaded(sceneName))
             {
                 var loadSceneOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);

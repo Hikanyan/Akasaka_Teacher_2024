@@ -5,7 +5,7 @@ using VContainer.Unity;
 
 namespace HikanyanLaboratory.Task.Script.Othello.Scene
 {
-    public class ManagerSceneController :IStartable
+    public class ManagerSceneController
     {
         private readonly SceneLoader _sceneLoader;
 
@@ -14,10 +14,6 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             _sceneLoader = sceneLoader;
         }
 
-        public async void Start()
-        {
-            await _sceneLoader.LoadSceneAsync("TitleScene");
-        }
 
         public async void LoadGameScene()
         {
