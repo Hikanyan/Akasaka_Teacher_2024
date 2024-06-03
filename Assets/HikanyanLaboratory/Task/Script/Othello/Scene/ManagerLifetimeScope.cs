@@ -1,4 +1,6 @@
-﻿using VContainer;
+﻿using System;
+using UnityEngine;
+using VContainer;
 using VContainer.Unity;
 
 namespace HikanyanLaboratory.Task.Script.Othello.Scene
@@ -10,6 +12,8 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
     /// </summary>
     public class ManagerLifetimeScope : LifetimeScope
     {
+        [SerializeField] private bool _isDebugMode;
+
         protected override void Configure(IContainerBuilder builder)
         {
             base.Configure(builder);
@@ -22,7 +26,7 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             builder.Register<InGameState>(Lifetime.Scoped);
             builder.Register<ResultState>(Lifetime.Scoped);
 
-            builder.RegisterEntryPoint<ManagerPresenter>();
+            builder.RegisterEntryPoint<ManagerPresenter>().WithParameter("isDebugMode", _isDebugMode);
         }
     }
 }

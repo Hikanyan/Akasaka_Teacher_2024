@@ -21,6 +21,16 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
 
         protected override void Configure(IContainerBuilder builder)
         {
+            base.Configure(builder);
+            // 親コンテナからManagerSceneControllerを取得
+            var parentLifetimeScope = Parent;
+            if (parentLifetimeScope != null)
+            {
+                var parentContainer = parentLifetimeScope.Container;
+                var sceneController = parentContainer.Resolve<ManagerSceneController>();
+                builder.RegisterInstance(sceneController);
+            }
+
             // Model
             builder.Register<IOthelloModel, OthelloModel>(Lifetime.Singleton);
             builder.Register<OthelloGameState>(Lifetime.Singleton);
@@ -54,16 +64,7 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             builder.Register<AITurnState>(Lifetime.Singleton).AsSelf();
             builder.Register<InGameState>(Lifetime.Singleton).AsSelf();
 
-            // Scene
-            // 親コンテナからSceneLoaderを取得
-            var parentScope = FindObjectOfType<ManagerLifetimeScope>();
-            if (parentScope == null)
-            {
-                var parentContainer = parentScope.Container;
-                var sceneLoader = parentContainer.Resolve<SceneLoader>();
-                builder.RegisterInstance(sceneLoader); // Presenter
-            }
-
+            
             // Presenter
             builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
 

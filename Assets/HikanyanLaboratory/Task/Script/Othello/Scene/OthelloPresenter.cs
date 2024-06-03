@@ -10,8 +10,9 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
     /// <summary>
     /// Othelloのプレゼンター
     /// </summary>
-    public abstract class OthelloPresenter
+    public class OthelloPresenter
     {
+        private readonly ManagerSceneController _sceneController;
         private readonly StateMachine _stateMachine;
         private readonly PlayerTurnState _playerTurnState;
         private readonly AITurnState _aiTurnState;
@@ -22,10 +23,10 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
         private readonly IAnimationService _animationService;
         private readonly IPersistenceService _persistenceService;
         private readonly IGameObjectFactory _gameObjectFactory;
-        private readonly SceneLoader _sceneLoader;
 
 
         public OthelloPresenter(
+            ManagerSceneController sceneController,
             StateMachine stateMachine,
             PlayerTurnState playerTurnState,
             AITurnState aiTurnState,
@@ -35,9 +36,10 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             IGameService gameService,
             IAnimationService animationService,
             IPersistenceService persistenceService,
-            IGameObjectFactory gameObjectFactory,
-            SceneLoader sceneLoader)
+            IGameObjectFactory gameObjectFactory
+        )
         {
+            _sceneController = sceneController;
             _stateMachine = stateMachine;
             _playerTurnState = playerTurnState;
             _aiTurnState = aiTurnState;
@@ -48,7 +50,7 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             _animationService = animationService;
             _persistenceService = persistenceService;
             _gameObjectFactory = gameObjectFactory;
-            _sceneLoader = sceneLoader;
+
 
             _playerTurnState.Presenter = this;
             _aiTurnState.Presenter = this;
@@ -75,9 +77,9 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
         }
 
 
-        public async void StartGame()
+        public void StartGame()
         {
-            await _sceneLoader.LoadSceneAsync("Othello");
+            _sceneController.LoadGameScene();
             _gameService.StartGame();
             _stateMachine.ChangeState(_playerTurnState);
             UpdateBoard();
@@ -85,8 +87,8 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
 
         public void EndGame()
         {
+            _sceneController.LoadResultScene();
             _gameService.EndGame();
-            _sceneLoader.LoadSceneAsync("ResultScene").Forget();
         }
 
         public void PlacePiece(int x, int y)
@@ -128,11 +130,6 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
         public void SwitchToPlayerTurn()
         {
             _stateMachine.ChangeState(_playerTurnState);
-        }
-
-        public async void SwitchToTitleState()
-        {
-            await _sceneLoader.LoadSceneAsync("TitleScene");
         }
     }
 }
