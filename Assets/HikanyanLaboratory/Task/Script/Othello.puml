@@ -1,6 +1,18 @@
 @startuml
 
-package "Othello" {
+package "Title" {
+    class TitleLifetimeScope {
+        +Configure(IContainerBuilder builder) : void
+    }
+    class TitleView {
+        +StartGame() : void
+    }
+
+    TitleLifetimeScope -down-> TitleView : configures
+}
+
+
+package "InGame" {
     package Model {
         interface IOthelloModel {
             +GetGameState() : OthelloGameState
@@ -185,4 +197,64 @@ package "Othello" {
     View.OthelloPieceView .down.> Factory.IGameObjectFactory : uses
 }
 
+package "Result" {
+    class ResultLifetimeScope {
+        +Configure(IContainerBuilder builder) : void
+    }
+
+    class ResultView {
+        +ShowResult() : void
+    }
+
+    ResultLifetimeScope -down-> ResultView : configures
+    
+}
+
+package "Manager" {
+    class ManagerLifetimeScope {
+        +Configure(IContainerBuilder builder) : void
+    }
+     class SceneLoader{
+     }
+     class ManagerSceneController{
+     }
+     class StateMachine{
+     }
+     class TitleState{
+     }
+     class InGameState{
+     }
+     class ResultState{
+     }
+     class ManagerPresenter{
+     }
+     
+    ManagerLifetimeScope -down-> SceneLoader : configures
+    ManagerLifetimeScope -down-> ManagerSceneController : configures
+    ManagerLifetimeScope -down-> StateMachine : configures
+    ManagerLifetimeScope -down-> TitleState : configures
+    ManagerLifetimeScope -down-> InGameState : configures
+    ManagerLifetimeScope -down-> ResultState : configures
+    ManagerLifetimeScope -down-> ManagerPresenter : configures
+    
+}
+
+package "Project" {
+    class ManagerLifetimeScope{
+        +Configure(IContainerBuilder builder) : void
+    }
+    class TitleLifetimeScope{
+        +Configure(IContainerBuilder builder) : void
+    }
+    class OthelloLifetimeScope{
+        +Configure(IContainerBuilder builder) : void
+    }
+    class ResultLifetimeScope{
+        +Configure(IContainerBuilder builder) : void
+    }
+
+    ManagerLifetimeScope -down-> TitleLifetimeScope : configures
+    ManagerLifetimeScope -down-> OthelloLifetimeScope : configures
+    ManagerLifetimeScope -down-> ResultLifetimeScope : configures
+}
 @enduml
