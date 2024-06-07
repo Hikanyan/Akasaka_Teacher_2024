@@ -35,8 +35,9 @@ public class TicTacToe : MonoBehaviour
         _currentPlayer = _startingPlayer;
         InitializeBoard();
 
+        // ゲームループを開始
         RunGameLoop().Forget();
-
+        // ゲーム終了時の処理
         _gameEndSubject
             .Where(isGameOver => isGameOver)
             .Subscribe(_ => { Debug.Log("ゲーム終了"); });
