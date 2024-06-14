@@ -56,26 +56,6 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             _aiTurnState.Presenter = this;
         }
 
-        public void ShowTitleScreen()
-        {
-            // タイトル画面を表示する処理
-        }
-
-        public void HideTitleScreen()
-        {
-            // タイトル画面を非表示にする処理
-        }
-
-        public void ShowResultScreen()
-        {
-            // リザルト画面を表示する処理
-        }
-
-        public void HideResultScreen()
-        {
-            // リザルト画面を非表示にする処理
-        }
-
 
         public void StartGame()
         {

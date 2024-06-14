@@ -1,0 +1,161 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using UniRx;
+using Random = UnityEngine.Random;
+
+public class LightsOut : MonoBehaviour, IPointerClickHandler
+{
+    [SerializeField] private int _rows = 5; //行
+    [SerializeField] private int _columns = 5; //列
+    [SerializeField] private Text _countText;
+    [SerializeField] private Text _timeText;
+    [SerializeField] private bool _isRandomize = true;
+    private int _moveCount = 0;
+    private readonly List<Cell> _cells = new List<Cell>();
+    private GridLayoutGroup _gridLayoutGroup;
+    private IDisposable _timerDisposable;
+    private bool _isGameRunning;
+    private float _currentTime;
+    // セルの情報を格納するクラス
+
+    class Cell
+    {
+        public int Row;
+        public int Column;
+        public bool IsOn;
+        public GameObject CellObject;
+    }
+
+    private void Start()
+    {
+        _gridLayoutGroup = GetComponent<GridLayoutGroup>();
+        if (_gridLayoutGroup != null)
+        {
+            _gridLayoutGroup.constraintCount = _columns;
+        }
+
+        Initialize();
+        _isGameRunning = true;
+        // _countが増えたら
+        this.ObserveEveryValueChanged(_ => _moveCount)
+            .Subscribe(_ => _countText.text = $"Count: {_moveCount}");
+        _currentTime = 0;
+        _timerDisposable = Observable.EveryUpdate()
+            .Where(_ => _isGameRunning)
+            .Subscribe(_ =>
+            {
+                _currentTime += Time.deltaTime;
+                _timeText.text = $"Time: {_currentTime:F2}";
+            })
+            .AddTo(this);
+    }
+
+    //初期化
+    void Initialize()
+    {
+        System.Random rand = new System.Random();
+
+        for (var r = 0; r < _rows; r++)
+        {
+            for (var c = 0; c < _columns; c++)
+            {
+                var cell = new Cell
+                {
+                    Row = r,
+                    Column = c,
+                    IsOn = !_isRandomize || rand.Next(0, 2) == 0,
+                    CellObject = new GameObject($"Cell({r}, {c})")
+                };
+
+                cell.CellObject.transform.parent = transform;
+                var image = cell.CellObject.AddComponent<Image>();
+                image.color = cell.IsOn ? Color.white : Color.black;
+
+                _cells.Add(cell);
+            }
+        }
+
+        if (_isRandomize)
+        {
+            // 全てのセルが同じ色にならないようにする
+            EnsureNotAllSameColor();
+        }
+    }
+
+    // セルがクリックされたときに呼び出される
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        var clickedCellObject = eventData.pointerCurrentRaycast.gameObject;
+        var clickedCell = _cells.Find(cell => cell.CellObject == clickedCellObject);
+
+        if (clickedCell != null)
+        {
+            _moveCount++;
+            ToggleCell(clickedCell);
+            ToggleAdjacentCells(clickedCell);
+            CheckForWin();
+        }
+    }
+
+    // セルを反転する
+    void ToggleCell(Cell cell)
+    {
+        cell.IsOn = !cell.IsOn;
+        var image = cell.CellObject.GetComponent<Image>();
+        image.color = cell.IsOn ? Color.white : Color.black;
+    }
+
+    // 隣接するセルを反転する
+    void ToggleAdjacentCells(Cell cell)
+    {
+        // 上下左右のセルを取得して、それぞれのセルを反転する
+        int[] dr = { -1, 1, 0, 0 };
+        int[] dc = { 0, 0, -1, 1 };
+        for (int i = 0; i < 4; i++) //上下左右
+        {
+            int newRow = cell.Row + dr[i];
+            int newCol = cell.Column + dc[i];
+
+            // セルが存在するかどうかを確認して、存在する場合はセルを反転する
+            if (newRow >= 0 && newRow < _rows && newCol >= 0 && newCol < _columns)
+            {
+                var adjacentCell = _cells.Find(c => c.Row == newRow && c.Column == newCol);
+                if (adjacentCell != null)
+                {
+                    ToggleCell(adjacentCell);
+                }
+            }
+        }
+    }
+
+
+    void EnsureNotAllSameColor()
+    {
+        bool firstCellColor = _cells[0].IsOn;
+
+        bool allSame = _cells.All(cell => cell.IsOn == firstCellColor);
+
+        if (!allSame) return;
+        var randomCell = _cells[Random.Range(0, _cells.Count)];
+        ToggleCell(randomCell);
+    }
+
+    void CheckForWin()
+    {
+        bool allOff = _cells.All(cell => !cell.IsOn);
+
+        if (!allOff) return;
+        _isGameRunning = false;
+        if (_timerDisposable != null)
+        {
+            _timerDisposable.Dispose();
+        }
+
+
+        Debug.Log($"Congratulations! You won in {_moveCount} moves and {_currentTime:F2} seconds.");
+    }
+}
