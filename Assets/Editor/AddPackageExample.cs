@@ -31,6 +31,10 @@ namespace Hikanyan.Core
         static void AddVContainer() => AddPackage("Add VContainer",
             "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer");
 
+        [MenuItem("HikanyanTools/Add uPalette")]
+        static void AdduPalette() => AddPackage("Add uPalette",
+            "https://github.com/Haruma-K/uPalette.git?path=/Assets/uPalette");
+
 
         static void Progress()
         {

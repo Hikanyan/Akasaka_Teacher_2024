@@ -154,13 +154,54 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
     /// </summary>
     void EnsureNotAllSameColor()
     {
+        int switchCount;
+        
+        // 初期化時に全てのセルをオフ（クリア状態）に設定
+        foreach (var cell in _cells)
+        {
+            cell.IsOn = false;
+            var image = cell.CellObject.GetComponent<Image>();
+            image.color = Color.black;
+        }
+
+        do
+        {
+            switchCount = 0;
+
+            // 全てのセルをオフにした後にランダムにスイッチ
+            for (var r = 0; r < _rows; r++)
+            {
+                for (var c = 0; c < _columns; c++)
+                {
+                    if (Random.value > 0.1f)
+                    {
+                        continue;
+                    }
+
+                    // クリア済みの状態からボタンを押していく
+                    var cell = _cells.Find(cell => cell.Row == r && cell.Column == c);
+                    ToggleCell(cell);
+                    ToggleAdjacentCells(cell);
+                    switchCount++;
+                    Debug.Log($"Switch: r={r}, c={c}", cell.CellObject);
+                }
+            }
+
+            // 少なくとも 2 セル以上がスイッチされることを保証
+            if (switchCount < 4)
+            {
+                Debug.Log("Not enough switches, reinitializing...");
+            }
+        } while (switchCount < 4 || IsAllCellsSameColor());
+    }
+
+    /// <summary>
+    /// 全てのセルが同じ色かどうかをチェックするメソッド
+    /// </summary>
+    private bool IsAllCellsSameColor()
+    {
         bool firstCellColor = _cells[0].IsOn;
-
-        bool allSame = _cells.All(cell => cell.IsOn == firstCellColor);
-
-        if (!allSame) return;
-        var randomCell = _cells[Random.Range(0, _cells.Count)];
-        ToggleCell(randomCell);
+        return _cells.All(cell => cell.IsOn == firstCellColor);
     }
 
     /// <summary>

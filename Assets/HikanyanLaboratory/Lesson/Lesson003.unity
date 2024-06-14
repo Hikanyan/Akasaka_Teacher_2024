@@ -800,7 +800,7 @@ MonoBehaviour:
   _countText: {fileID: 391146911}
   _timeText: {fileID: 1383159289}
   _winText: {fileID: 20735800}
-  _isRandomize: 0
+  _isRandomize: 1
 --- !u!114 &1470083745
 MonoBehaviour:
   m_ObjectHideFlags: 0
