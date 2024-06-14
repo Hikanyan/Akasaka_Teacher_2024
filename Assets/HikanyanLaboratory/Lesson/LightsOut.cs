@@ -13,6 +13,7 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
     [SerializeField] private int _columns = 5; //列
     [SerializeField] private Text _countText;
     [SerializeField] private Text _timeText;
+    [SerializeField] private Text _winText;
     [SerializeField] private bool _isRandomize = true;
     private int _moveCount = 0;
     private readonly List<Cell> _cells = new List<Cell>();
@@ -54,7 +55,9 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
             .AddTo(this);
     }
 
-    //初期化
+    /// <summary>
+    /// ゲームを初期化する
+    /// </summary>
     void Initialize()
     {
         System.Random rand = new System.Random();
@@ -86,11 +89,14 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // セルがクリックされたときに呼び出される
+    /// <summary>
+    /// セルがクリックされたときに呼び出される
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerClick(PointerEventData eventData)
     {
         var clickedCellObject = eventData.pointerCurrentRaycast.gameObject;
-        var clickedCell = _cells.Find(cell => cell.CellObject == clickedCellObject);
+        var clickedCell = _cells.Find(cell => cell.CellObject == clickedCellObject); // クリックされたセルを取得する
 
         if (clickedCell != null)
         {
@@ -99,17 +105,27 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
             ToggleAdjacentCells(clickedCell);
             CheckForWin();
         }
+        else
+        {
+            Debug.LogWarning("Cell not found.");
+        }
     }
 
-    // セルを反転する
+    /// <summary>
+    /// セルを反転する
+    /// </summary>
+    /// <param name="cell"></param>
     void ToggleCell(Cell cell)
     {
         cell.IsOn = !cell.IsOn;
-        var image = cell.CellObject.GetComponent<Image>();
+        var image = cell.CellObject.GetComponent<Image>(); // セルのImageを取得して、色を変更する
         image.color = cell.IsOn ? Color.white : Color.black;
     }
 
-    // 隣接するセルを反転する
+    /// <summary>
+    /// 隣接するセルを反転する
+    /// </summary>
+    /// <param name="cell"></param>
     void ToggleAdjacentCells(Cell cell)
     {
         // 上下左右のセルを取得して、それぞれのセルを反転する
@@ -133,6 +149,9 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
     }
 
 
+    /// <summary>
+    /// 全てのセルが同じ色にならないようにする
+    /// </summary>
     void EnsureNotAllSameColor()
     {
         bool firstCellColor = _cells[0].IsOn;
@@ -144,6 +163,9 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
         ToggleCell(randomCell);
     }
 
+    /// <summary>
+    /// 勝利条件をチェックする
+    /// </summary>
     void CheckForWin()
     {
         bool allOff = _cells.All(cell => !cell.IsOn);
@@ -155,6 +177,7 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
             _timerDisposable.Dispose();
         }
 
+        _winText.text = $"Congratulations! You won in {_moveCount} moves and {_currentTime:F2} seconds.";
 
         Debug.Log($"Congratulations! You won in {_moveCount} moves and {_currentTime:F2} seconds.");
     }
