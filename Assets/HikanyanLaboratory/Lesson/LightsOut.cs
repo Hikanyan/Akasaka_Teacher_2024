@@ -1,18 +1,25 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UniRx;
+using Random = UnityEngine.Random;
 
 public class LightsOut : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] private int _rows = 5;
-    [SerializeField] private int _columns = 5;
+    [SerializeField] private int _rows = 5; //行
+    [SerializeField] private int _columns = 5; //列
     [SerializeField] private Text _countText;
-    private int _count = 0;
+    [SerializeField] private Text _timeText;
+    [SerializeField] private bool _isRandomize = true;
+    private int _moveCount = 0;
     private readonly List<Cell> _cells = new List<Cell>();
-
+    private GridLayoutGroup _gridLayoutGroup;
+    private IDisposable _timerDisposable;
+    private bool _isGameRunning;
+    private float _currentTime;
     // セルの情報を格納するクラス
 
     class Cell
@@ -25,15 +32,33 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
+        _gridLayoutGroup = GetComponent<GridLayoutGroup>();
+        if (_gridLayoutGroup != null)
+        {
+            _gridLayoutGroup.constraintCount = _columns;
+        }
+
         Initialize();
+        _isGameRunning = true;
         // _countが増えたら
-        this.ObserveEveryValueChanged(_ => _count)
-            .Subscribe(_ => _countText.text = $"Count: {_count}");
+        this.ObserveEveryValueChanged(_ => _moveCount)
+            .Subscribe(_ => _countText.text = $"Count: {_moveCount}");
+        _currentTime = 0;
+        _timerDisposable = Observable.EveryUpdate()
+            .Where(_ => _isGameRunning)
+            .Subscribe(_ =>
+            {
+                _currentTime += Time.deltaTime;
+                _timeText.text = $"Time: {_currentTime:F2}";
+            })
+            .AddTo(this);
     }
 
     //初期化
     void Initialize()
     {
+        System.Random rand = new System.Random();
+
         for (var r = 0; r < _rows; r++)
         {
             for (var c = 0; c < _columns; c++)
@@ -42,16 +67,22 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
                 {
                     Row = r,
                     Column = c,
-                    IsOn = true,
+                    IsOn = !_isRandomize || rand.Next(0, 2) == 0,
                     CellObject = new GameObject($"Cell({r}, {c})")
                 };
 
                 cell.CellObject.transform.parent = transform;
                 var image = cell.CellObject.AddComponent<Image>();
-                image.color = Color.white;
+                image.color = cell.IsOn ? Color.white : Color.black;
 
                 _cells.Add(cell);
             }
+        }
+
+        if (_isRandomize)
+        {
+            // 全てのセルが同じ色にならないようにする
+            EnsureNotAllSameColor();
         }
     }
 
@@ -63,9 +94,10 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
 
         if (clickedCell != null)
         {
-            _count++;
+            _moveCount++;
             ToggleCell(clickedCell);
             ToggleAdjacentCells(clickedCell);
+            CheckForWin();
         }
     }
 
@@ -77,6 +109,7 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
         image.color = cell.IsOn ? Color.white : Color.black;
     }
 
+    // 隣接するセルを反転する
     void ToggleAdjacentCells(Cell cell)
     {
         // 上下左右のセルを取得して、それぞれのセルを反転する
@@ -97,5 +130,32 @@ public class LightsOut : MonoBehaviour, IPointerClickHandler
                 }
             }
         }
+    }
+
+
+    void EnsureNotAllSameColor()
+    {
+        bool firstCellColor = _cells[0].IsOn;
+
+        bool allSame = _cells.All(cell => cell.IsOn == firstCellColor);
+
+        if (!allSame) return;
+        var randomCell = _cells[Random.Range(0, _cells.Count)];
+        ToggleCell(randomCell);
+    }
+
+    void CheckForWin()
+    {
+        bool allOff = _cells.All(cell => !cell.IsOn);
+
+        if (!allOff) return;
+        _isGameRunning = false;
+        if (_timerDisposable != null)
+        {
+            _timerDisposable.Dispose();
+        }
+
+
+        Debug.Log($"Congratulations! You won in {_moveCount} moves and {_currentTime:F2} seconds.");
     }
 }
