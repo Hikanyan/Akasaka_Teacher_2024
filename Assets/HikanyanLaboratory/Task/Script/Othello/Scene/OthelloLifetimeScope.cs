@@ -64,20 +64,9 @@ namespace HikanyanLaboratory.Task.Script.Othello.Scene
             builder.Register<AITurnState>(Lifetime.Singleton).AsSelf();
             builder.Register<InGameState>(Lifetime.Singleton).AsSelf();
 
-            
+
             // Presenter
             builder.Register<OthelloPresenter>(Lifetime.Singleton).AsSelf();
-
-            // Presenterの初期化後にStateにPresenterを設定
-            builder.RegisterBuildCallback(container =>
-            {
-                var presenter = container.Resolve<OthelloPresenter>();
-                var playerTurnState = container.Resolve<PlayerTurnState>();
-                var aiTurnState = container.Resolve<AITurnState>();
-
-                playerTurnState.Presenter = presenter;
-                aiTurnState.Presenter = presenter;
-            });
         }
     }
 }
