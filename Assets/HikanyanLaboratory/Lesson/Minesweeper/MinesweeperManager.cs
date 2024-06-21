@@ -35,11 +35,12 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
         private void Update()
         {
             if (_gameOver) return;
+
             _timeRemaining -= Time.deltaTime;
             if (_timeRemaining <= 0)
             {
                 _timeRemaining = 0;
-                GameOver();
+                GameJudgment(false);
             }
 
             UpdateTimerText();
@@ -51,21 +52,23 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
             _timerText.text = $"Time: {_timeRemaining:F2}";
         }
 
-        public void GameOver()
+        public void GameJudgment(bool win)
         {
             _gameOver = true;
-            _resultText.text = "Game Over";
+            _resultText.text = win ? "You Win!" : "Game Over";
         }
 
         void CheckWinCondition()
         {
-            if (_revealedCellCount == (_rows * _columns) - _mineCount)
+            if (_revealedCellCount == _rows * _columns - _mineCount)
             {
-                _resultText.text = "You Win!";
-                _gameOver = true; // ゲームクリアでゲームを終了
+                GameJudgment(true);
             }
         }
 
+        /// <summary>
+        /// グリッドを生成する
+        /// </summary>
         private void GenerateGrid()
         {
             _cells = new Cell[_rows, _columns];
@@ -98,10 +101,7 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
 
             Reveal(cell.Row, cell.Column);
 
-            if (cell.CellState == CellState.Mine)
-            {
-                CheckWinCondition();
-            }
+            CheckWinCondition();
         }
 
         /// <summary>
@@ -111,18 +111,16 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
         /// <param name="column"></param>
         private void Reveal(int row, int column)
         {
-            if (row < 0 || row >= _rows || column < 0 || column >= _columns)
-            {
-                return;
-            }
+            if (row < 0 || row >= _rows || column < 0 || column >= _columns) return;
 
             Cell cell = _cells[row, column];
-            if (cell.CellVisibility == CellVisibility.Revealed || cell.CellVisibility == CellVisibility.Flagged)
-            {
-                return;
-            }
+            if (cell.CellVisibility == CellVisibility.Revealed ||
+                cell.CellVisibility == CellVisibility.Flagged) return;
 
             cell.Reveal();
+
+            RevealedCellCount(cell.CellState == CellState.Mine);
+
 
             if (cell.AdjacentMineCount == 0 && cell.CellState != CellState.Mine)
             {
@@ -137,6 +135,17 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
         }
 
         /// <summary>
+        /// 開示済みのセル数をカウントする
+        /// </summary>
+        /// <param name="isMine"></param>
+        public void RevealedCellCount(bool isMine)
+        {
+            // 三項演算子
+            _revealedCellCount += isMine ? -1 : 1;
+            Debug.Log($" RevealedCellCount{_revealedCellCount}");
+        }
+
+        /// <summary>
         /// 地雷を配置する
         /// 地雷をはいちする際、隣接するセルの地雷数をインクリメントする
         /// </summary>
@@ -145,6 +154,7 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
             int placedMines = 0;
             // セル数より大きい値は設定できないようにする
             _mineCount = _mineCount > _cells.Length ? _cells.Length : _mineCount;
+
             while (placedMines < _mineCount)
             {
                 var r = Random.Range(0, _rows);
@@ -194,7 +204,6 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
                 if (nr >= 0 && nr < _rows && nc >= 0 && nc < _columns && _cells[nr, nc].CellState != CellState.Mine)
                 {
                     _cells[nr, nc].AdjacentMineCount++;
-                    //_cells[nr, nc].OnCellStateChanged();
                 }
             }
         }

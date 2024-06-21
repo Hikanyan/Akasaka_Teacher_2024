@@ -84,7 +84,7 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
                     {
                         _view.text = "X";
                         _view.color = Color.red;
-                        Minesweeper.GameOver();
+                        Minesweeper.GameJudgment(false);
                     }
                     else
                     {
@@ -107,7 +107,7 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
             //Debug.Log("OnPointerClick");
             if (eventData.button == PointerEventData.InputButton.Left)
             {
-                OnFirstClick();
+                OnLeftClick();
                 //Debug.Log("Reveal");
             }
             else if (eventData.button == PointerEventData.InputButton.Right)
@@ -119,12 +119,13 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
 
 
         /// <summary>
-        /// 最初のクリック時の処理
+        /// 左クリック時の処理
         /// </summary>
-        private void OnFirstClick()
+        private void OnLeftClick()
         {
             Minesweeper.RevealCell(this);
         }
+
 
         /// <summary>
         /// セルを開く
