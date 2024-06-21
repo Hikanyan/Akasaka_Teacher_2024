@@ -84,6 +84,7 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
                     {
                         _view.text = "X";
                         _view.color = Color.red;
+                        Minesweeper.GameOver();
                     }
                     else
                     {

@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace HikanyanLaboratory.Lesson.Minesweeper
 {
@@ -8,11 +10,17 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
         [SerializeField] private int _rows = 10;
         [SerializeField] private int _columns = 10;
         [SerializeField] private int _mineCount = 10;
+        [SerializeField] private float _timeLimit = 120f;
         [SerializeField] private GridLayoutGroup _gridLayoutGroup = null;
         [SerializeField] private Cell _cellPrefab = null;
+        [SerializeField] private Text _timerText = null;
+        [SerializeField] private Text _resultText = null;
 
         private Cell[,] _cells;
         private bool _minesPlaced = false;
+        private bool _gameOver = false;
+        private float _timeRemaining;
+        private int _revealedCellCount = 0;
 
         private void Start()
         {
@@ -20,6 +28,42 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
             _gridLayoutGroup.constraintCount = _columns;
 
             GenerateGrid();
+            _timeRemaining = _timeLimit;
+            _resultText.text = "";
+        }
+
+        private void Update()
+        {
+            if (_gameOver) return;
+            _timeRemaining -= Time.deltaTime;
+            if (_timeRemaining <= 0)
+            {
+                _timeRemaining = 0;
+                GameOver();
+            }
+
+            UpdateTimerText();
+        }
+
+        private void UpdateTimerText()
+        {
+            if (_timerText == null) return;
+            _timerText.text = $"Time: {_timeRemaining:F2}";
+        }
+
+        public void GameOver()
+        {
+            _gameOver = true;
+            _resultText.text = "Game Over";
+        }
+
+        void CheckWinCondition()
+        {
+            if (_revealedCellCount == (_rows * _columns) - _mineCount)
+            {
+                _resultText.text = "You Win!";
+                _gameOver = true; // ゲームクリアでゲームを終了
+            }
         }
 
         private void GenerateGrid()
@@ -44,6 +88,7 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
         /// <param name="cell"></param>
         public void RevealCell(Cell cell)
         {
+            if (_gameOver) return;
             if (!_minesPlaced)
             {
                 Debug.Log("地雷配置");
@@ -51,11 +96,43 @@ namespace HikanyanLaboratory.Lesson.Minesweeper
                 _minesPlaced = true;
             }
 
-            cell.Reveal();
+            Reveal(cell.Row, cell.Column);
 
             if (cell.CellState == CellState.Mine)
             {
-                Debug.Log("Game Over");
+                CheckWinCondition();
+            }
+        }
+
+        /// <summary>
+        /// 隣接しているセルを再帰的に開く
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        private void Reveal(int row, int column)
+        {
+            if (row < 0 || row >= _rows || column < 0 || column >= _columns)
+            {
+                return;
+            }
+
+            Cell cell = _cells[row, column];
+            if (cell.CellVisibility == CellVisibility.Revealed || cell.CellVisibility == CellVisibility.Flagged)
+            {
+                return;
+            }
+
+            cell.Reveal();
+
+            if (cell.AdjacentMineCount == 0 && cell.CellState != CellState.Mine)
+            {
+                int[] dr = { -1, -1, -1, 0, 0, 1, 1, 1 };
+                int[] dc = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+                for (int i = 0; i < 8; i++)
+                {
+                    Reveal(row + dr[i], column + dc[i]);
+                }
             }
         }
 
