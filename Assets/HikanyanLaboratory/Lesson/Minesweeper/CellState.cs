@@ -12,6 +12,13 @@
         Seven = 7,
         Eight = 8,
 
-        Mine = -1,
+        Mine = -1, // 地雷
+    }
+
+    public enum CellVisibility
+    {
+        Secret, // 隠し
+        Revealed, // 開示済み
+        Flagged, // 旗立て済み
     }
 }

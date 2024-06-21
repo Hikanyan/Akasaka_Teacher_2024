@@ -1,11 +1,125 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HikanyanLaboratory.Lesson.Minesweeper
 {
-    public class MinesweeperManager : MonoBehaviour
+    public class Minesweeper : MonoBehaviour
     {
-        
+        [SerializeField] private int _rows = 10;
+        [SerializeField] private int _columns = 10;
+        [SerializeField] private int _mineCount = 10;
+        [SerializeField] private GridLayoutGroup _gridLayoutGroup = null;
+        [SerializeField] private Cell _cellPrefab = null;
+
+        private Cell[,] _cells;
+        private bool _minesPlaced = false;
+
+        private void Start()
+        {
+            _gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            _gridLayoutGroup.constraintCount = _columns;
+
+            GenerateGrid();
+        }
+
+        private void GenerateGrid()
+        {
+            _cells = new Cell[_rows, _columns];
+            var parent = _gridLayoutGroup.transform;
+
+            for (var r = 0; r < _rows; r++)
+            {
+                for (var c = 0; c < _columns; c++)
+                {
+                    var cell = Instantiate(_cellPrefab, parent, true);
+                    cell.Initialize(this, r, c);
+                    _cells[r, c] = cell;
+                }
+            }
+        }
+
+        /// <summary>
+        /// セルを開く
+        /// </summary>
+        /// <param name="cell"></param>
+        public void RevealCell(Cell cell)
+        {
+            if (!_minesPlaced)
+            {
+                Debug.Log("地雷配置");
+                PlaceMines(cell.Row, cell.Column);
+                _minesPlaced = true;
+            }
+
+            cell.Reveal();
+
+            if (cell.CellState == CellState.Mine)
+            {
+                Debug.Log("Game Over");
+            }
+        }
+
+        /// <summary>
+        /// 地雷を配置する
+        /// 地雷をはいちする際、隣接するセルの地雷数をインクリメントする
+        /// </summary>
+        private void PlaceMines(int initialRow = -1, int initialColumn = -1)
+        {
+            int placedMines = 0;
+            // セル数より大きい値は設定できないようにする
+            _mineCount = _mineCount > _cells.Length ? _cells.Length : _mineCount;
+            while (placedMines < _mineCount)
+            {
+                var r = Random.Range(0, _rows);
+                var c = Random.Range(0, _columns);
+                var cell = _cells[r, c];
+                // 初期セルと隣接しているセルに地雷を配置しない
+                if (Mathf.Abs(r - initialRow) <= 1 && Mathf.Abs(c - initialColumn) <= 1 ||
+                    cell.CellState == CellState.Mine)
+                {
+                    Debug.Log("地雷配置再抽選");
+                    continue;
+                }
+
+                if (_cells[r, c].CellState != CellState.Mine)
+                {
+                    _cells[r, c].CellState = CellState.Mine;
+                    placedMines++;
+                    IncrementAdjacentCells(r, c);
+                }
+            }
+
+            Debug.Log($"地雷配置完了{placedMines}");
+        }
+
+
+        /// <summary>
+        /// 隣接するセルの地雷数をインクリメントする
+        /// </summary>
+        /// <param name="mineRow"></param>
+        /// <param name="mineColumn"></param>
+        private void IncrementAdjacentCells(int mineRow, int mineColumn)
+        {
+            /*
+             dr/dc     -1       0      +1
+               -1   (-1,-1)  (-1,0)  (-1,+1)
+               0    (0, -1)  (0,0)   (0, +1)
+               +1   (+1,-1)  (+1,0)  (+1,+1)
+             */
+            int[] dr = { -1, -1, -1, 0, 0, 1, 1, 1 };
+            int[] dc = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+            for (int i = 0; i < 8; i++)
+            {
+                int nr = mineRow + dr[i];
+                int nc = mineColumn + dc[i];
+
+                if (nr >= 0 && nr < _rows && nc >= 0 && nc < _columns && _cells[nr, nc].CellState != CellState.Mine)
+                {
+                    _cells[nr, nc].AdjacentMineCount++;
+                    //_cells[nr, nc].OnCellStateChanged();
+                }
+            }
+        }
     }
 }
