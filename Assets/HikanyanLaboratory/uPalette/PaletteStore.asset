@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0edd4d6dec9974f11ba4b078ca3a0e1e, type: 3}
+  m_Name: PaletteStore
+  m_EditorClassIdentifier: 
+  _colorPalette:
+    _entries:
+      _keys: []
+      _values: []
+    _themes:
+      _keys:
+      - ed0f2f37-273f-487c-8b87-779dce684371
+      _values:
+      - _id: ed0f2f37-273f-487c-8b87-779dce684371
+        _name:
+          _value: Default
+    _entryOrders:
+      _ids: []
+    _themeOrders:
+      _ids:
+      - ed0f2f37-273f-487c-8b87-779dce684371
+    _activeThemeId: ed0f2f37-273f-487c-8b87-779dce684371
+  _gradientPalette:
+    _entries:
+      _keys: []
+      _values: []
+    _themes:
+      _keys:
+      - b78e0a89-7628-4c4e-94b1-251f3da6ca22
+      _values:
+      - _id: b78e0a89-7628-4c4e-94b1-251f3da6ca22
+        _name:
+          _value: Default
+    _entryOrders:
+      _ids: []
+    _themeOrders:
+      _ids:
+      - b78e0a89-7628-4c4e-94b1-251f3da6ca22
+    _activeThemeId: b78e0a89-7628-4c4e-94b1-251f3da6ca22
+  _characterStylePalette:
+    _entries:
+      _keys: []
+      _values: []
+    _themes:
+      _keys:
+      - e24fe3b9-0ed9-4a45-9c74-72bd4a4c5a2f
+      _values:
+      - _id: e24fe3b9-0ed9-4a45-9c74-72bd4a4c5a2f
+        _name:
+          _value: Default
+    _entryOrders:
+      _ids: []
+    _themeOrders:
+      _ids:
+      - e24fe3b9-0ed9-4a45-9c74-72bd4a4c5a2f
+    _activeThemeId: e24fe3b9-0ed9-4a45-9c74-72bd4a4c5a2f
+  _characterStyleTMPPalette:
+    _entries:
+      _keys: []
+      _values: []
+    _themes:
+      _keys:
+      - f4e41e7b-951f-49fc-9489-3f5b5469c032
+      _values:
+      - _id: f4e41e7b-951f-49fc-9489-3f5b5469c032
+        _name:
+          _value: Default
+    _entryOrders:
+      _ids: []
+    _themeOrders:
+      _ids:
+      - f4e41e7b-951f-49fc-9489-3f5b5469c032
+    _activeThemeId: f4e41e7b-951f-49fc-9489-3f5b5469c032
+  _missingEntryErrorLevel: 1
